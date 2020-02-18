@@ -21,6 +21,8 @@ TEST(Calc, set)
     EXPECT_DOUBLE_EQ(0, process_line(0, "0000"));
     EXPECT_DOUBLE_EQ(0, process_line(101, "0"));
     EXPECT_DOUBLE_EQ(13, process_line(0, "13"));
+    EXPECT_DOUBLE_EQ(5, process_line(99, "5."));
+    EXPECT_DOUBLE_EQ(0.05625, process_line(1113, "0.05625"));
     EXPECT_DOUBLE_EQ(1234567890.0, process_line(1, "1234567890"));
     testing::internal::CaptureStderr();
     EXPECT_DOUBLE_EQ(1234567890.0, process_line(1, "12345678900000"));
@@ -32,6 +34,7 @@ TEST(Calc, add)
     EXPECT_DOUBLE_EQ(7, process_line(0, "+7"));
     EXPECT_DOUBLE_EQ(7, process_line(5, "+ 2"));
     EXPECT_DOUBLE_EQ(7, process_line(5, "+ \t\t   2"));
+    EXPECT_DOUBLE_EQ(2.34, process_line(1.5, "+ 0.84"));
     testing::internal::CaptureStderr();
     EXPECT_DOUBLE_EQ(1234567899.0, process_line(9, "+    12345678900000"));
     EXPECT_EQ("Argument isn't fully parsed, suffix left: '0000'\n", testing::internal::GetCapturedStderr());
@@ -43,6 +46,7 @@ TEST(Calc, sub)
     EXPECT_DOUBLE_EQ(0, process_line(0, "-0"));
     EXPECT_DOUBLE_EQ(0, process_line(3, "-3"));
     EXPECT_DOUBLE_EQ(-3, process_line(7, "-10"));
+    EXPECT_DOUBLE_EQ(-12344.6789, process_line(1, "- 12345.67890"));
 }
 
 TEST(Calc, mul)
@@ -64,6 +68,7 @@ TEST(Calc, div)
     EXPECT_DOUBLE_EQ(0.7, process_line(7, "/ 10"));
     EXPECT_DOUBLE_EQ(0.3333333333333333, process_line(1, "/ 3"));
     EXPECT_DOUBLE_EQ(-0.5, process_line(-2, "/ 4"));
+    EXPECT_DOUBLE_EQ(100, process_line(10, "/ 0.1"));
 }
 
 TEST(Calc, rem)
@@ -91,6 +96,7 @@ TEST(Calc, pow)
     EXPECT_DOUBLE_EQ(37, process_line(37, "^1"));
     EXPECT_DOUBLE_EQ(25, process_line(-5, "^2"));
     EXPECT_DOUBLE_EQ(-27, process_line(-3, "^3"));
+    EXPECT_DOUBLE_EQ(5, process_line(25, "^0.5"));
 }
 
 TEST(Calc, sqrt)

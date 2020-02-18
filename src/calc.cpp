@@ -110,6 +110,8 @@ double parse_arg(const std::string & line, std::size_t & i)
     double res = 0;
     std::size_t count = 0;
     bool good = true;
+    bool integer = true;
+    double fraction = 1;
     while (good && i < line.size() && count < max_decimal_digits) {
         switch (line[i]) {
             case '0': [[fallthrough]];
@@ -122,10 +124,20 @@ double parse_arg(const std::string & line, std::size_t & i)
             case '7': [[fallthrough]];
             case '8': [[fallthrough]];
             case '9':
-                res *= 10;
-                res += line[i] - '0';
+                if (integer) {
+                    res *= 10;
+                    res += line[i] - '0';
+                }
+                else {
+                    fraction /= 10;
+                    res += (line[i] - '0') * fraction;
+                }
                 ++i;
                 ++count;
+                break;
+            case '.':
+                integer = false;
+                ++i;
                 break;
             default:
                 good = false;
