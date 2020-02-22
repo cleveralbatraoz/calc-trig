@@ -204,7 +204,7 @@ double binary(const Op op, const double left, const double right)
 
 } // anonymous namespace
 
-double process_line(const double current, bool& rad_on, const std::string & line)
+double process_line(const double current, const std::string & line)
 {
     std::size_t i = 0;
     const auto op = parse_op(line, i);
