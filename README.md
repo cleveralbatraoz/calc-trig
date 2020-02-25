@@ -1,4 +1,4 @@
-![Calc CI](https://github.com/itiviti-cpp-master/calc/workflows/Calc%20CI/badge.svg)
+![Calc CI](https://github.com/itiviti-cpp-master/calc-trig/workflows/Calc%20CI/badge.svg)
 # Простой калькулятор
 Поддерживаются базовые арифметические операции и ввод десятичных чисел.
 Операции производятся над значением из единственного регистра (он же - приёмник результата) и, если операция бинарная, вторым
