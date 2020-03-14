@@ -1,7 +1,6 @@
 #include "calc.h"
 
 #include <iostream>
-#include <iomanip>
 #include <string>
 
 int main() {
@@ -9,6 +8,6 @@ int main() {
   bool rad_on = false;
   for (std::string line; std::getline(std::cin, line);) {
 	current = process_line(current, rad_on, line);
-	std::cout << std::setprecision(20) << std::fixed << current << std::endl;
+	std::cout << current << std::endl;
   }
 }

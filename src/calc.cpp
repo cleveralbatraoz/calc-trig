@@ -8,7 +8,6 @@ namespace {
 
 const std::size_t max_decimal_digits = 10;
 const double eps = 1e-10;
-const double pi = 3.1415926535897932384626433;
 const double inf = 16331239353195370;
 
 enum class Op {
@@ -17,7 +16,6 @@ enum class Op {
 
 std::size_t arity(const Op op) {
   switch (op) {
-	// error
 	case Op::ERR: return 0;
 	case Op::RAD: return 0;
 	case Op::DEG: return 0;
@@ -43,6 +41,7 @@ std::size_t arity(const Op op) {
   }
   return 0;
 }
+
 Op parse_op(const std::string &line, std::size_t &i) {
   const auto rollback = [&i, &line](const std::size_t n) {
 	i -= n;
@@ -222,17 +221,36 @@ double ctn(double current) {
 double actn(double current) {
   double angle = atan(1 / current);
   if (angle < 0) {
-    angle += pi;
+	angle += M_PI;
   }
   return angle;
 }
 
 double to_radians(const double angle, const bool rad_on) {
-  return rad_on ? angle : (angle / 180 * pi);
+  return rad_on ? angle : (angle / 180 * M_PI);
 }
 
 double to_degrees(const double angle, const bool rad_on) {
-  return rad_on ? angle : angle * 180 / pi;
+  return rad_on ? angle : angle * 180 / M_PI;
+}
+
+double nullary(double current, const Op op, bool &rad_on) {
+  switch (op) {
+	case Op::ERR: {
+	  return current;
+	}
+	case Op::RAD: {
+	  rad_on = true;
+	  return current;
+	}
+	case Op::DEG: {
+	  rad_on = false;
+	  return current;
+	}
+	default: {
+	  return current;
+	}
+  }
 }
 
 double unary(double current, const Op op, const bool rad_on) {
@@ -251,7 +269,7 @@ double unary(double current, const Op op, const bool rad_on) {
 	  if (std::abs(cos(to_radians(current, rad_on))) > eps) {
 		return tan(to_radians(current, rad_on));
 	  } else {
-	    return inf;
+		return inf;
 	  }
 	}
 	case Op::CTN: {
@@ -278,7 +296,7 @@ double unary(double current, const Op op, const bool rad_on) {
 	  }
 	}
 	case Op::ATAN: {
-	  if (std::abs(current) < pi / 2) {
+	  if (std::abs(current) < M_PI / 2) {
 		return to_degrees(atan(current), rad_on);
 	  } else {
 		std::cerr << "Bad argument for ATAN: " << current << std::endl;
@@ -286,7 +304,7 @@ double unary(double current, const Op op, const bool rad_on) {
 	  }
 	}
 	case Op::ACTN: {
-	  if (0 < std::abs(current) && std::abs(current) < pi) {
+	  if (0 < std::abs(current) && std::abs(current) < M_PI) {
 		return to_degrees(actn(current), rad_on);
 	  } else {
 		std::cerr << "Bad argument for ACTN: " << current << std::endl;
@@ -327,26 +345,17 @@ double binary(const Op op, const double left, const double right) {
 double process_line(const double current, bool &rad_on, const std::string &line) {
   std::size_t i = 0;
   const auto op = parse_op(line, i);
-
-  if (op == Op::RAD) {
-    rad_on = true;
-    return current;
-  }
-  if (op == Op::DEG) {
-  	rad_on = false;
-  	return current;
-  }
   switch (arity(op)) {
-    case 1: {
+	case 0: {
+	  return nullary(current, op, rad_on);
+	}
+	case 1: {
 	  return unary(current, op, rad_on);
 	}
 	case 2: {
 	  i = skip_ws(line, i);
 	  const auto arg = parse_arg(line, i);
 	  return binary(op, current, arg);
-	}
-	default: {
-	  break;
 	}
   }
   return current;
